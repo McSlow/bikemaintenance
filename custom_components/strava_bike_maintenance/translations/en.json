@@ -16,6 +16,9 @@
     },
     "abort": {
       "already_configured": "Only a single Strava Bike Maintenance entry is supported."
+    },
+    "error": {
+      "missing_external_url": "Set an external URL under Settings → System → Network and use the same host in the Strava callback before continuing."
     }
   },
   "services": {

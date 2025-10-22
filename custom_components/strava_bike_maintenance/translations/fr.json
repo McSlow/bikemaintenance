@@ -16,6 +16,9 @@
     },
     "abort": {
       "already_configured": "Une seule instance de Strava Bike Maintenance est prise en charge."
+    },
+    "error": {
+      "missing_external_url": "Définissez une URL externe dans Paramètres → Système → Réseau et utilisez le même hôte pour l’URL de rappel Strava avant de continuer."
     }
   },
   "services": {

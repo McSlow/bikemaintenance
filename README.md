@@ -18,10 +18,11 @@ Keep on top of wear items across your bikes by syncing Strava mileage straight i
 ## ⚙️ Installation
 1. Copy `custom_components/strava_bike_maintenance` into your Home Assistant `custom_components` directory (e.g. `/config/custom_components/`).
 2. Restart Home Assistant to load the integration.
-3. Go to **Settings → Devices & Services → Add Integration**, search for **Strava Bike Maintenance**, and select it.
-   - In the Strava developer portal set the callback URL/domain to your Home Assistant URL followed by `/auth/external/callback` (e.g. `https://example.duckdns.org/auth/external/callback`).
-4. Enter your Strava Client ID and Client Secret. Authorise Home Assistant when Strava prompts you.
-5. Once linked, the integration creates devices and sensors for every bike returned by Strava.
+3. In Home Assistant set **Settings → System → Network → External URL** to the public HTTPS address Strava can reach (e.g. `https://example.duckdns.org`).
+4. Go to **Settings → Devices & Services → Add Integration**, search for **Strava Bike Maintenance**, and select it.
+   - In the Strava developer portal set the callback URL/domain to the same host followed by `/auth/external/callback` (e.g. `https://example.duckdns.org/auth/external/callback`).
+5. Enter your Strava Client ID and Client Secret. Authorise Home Assistant when Strava prompts you.
+6. Once linked, the integration creates devices and sensors for every bike returned by Strava.
 
 ## 📡 Entities
 Each bike exposes:

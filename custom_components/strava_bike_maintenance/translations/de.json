@@ -16,6 +16,9 @@
     },
     "abort": {
       "already_configured": "Es kann nur ein einzelner Strava-Bike-Maintenance-Eintrag konfiguriert werden."
+    },
+    "error": {
+      "missing_external_url": "Lege unter Einstellungen → System → Netzwerk eine externe URL fest und verwende denselben Host in der Strava-Callback-URL, bevor du fortfährst."
     }
   },
   "services": {
