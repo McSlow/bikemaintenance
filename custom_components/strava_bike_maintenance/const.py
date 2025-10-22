@@ -9,7 +9,7 @@ API_AUTHORIZE_URL = "https://www.strava.com/oauth/authorize"
 API_TOKEN_URL = "https://www.strava.com/oauth/token"
 API_BASE_URL = "https://www.strava.com/api/v3"
 
-UPDATE_INTERVAL_SECONDS = 900  # 15 minutes
+UPDATE_INTERVAL_SECONDS = 7200  # 2 hours
 
 STORAGE_VERSION = 1
 STORAGE_KEY = f"{DOMAIN}_wear_counters"
