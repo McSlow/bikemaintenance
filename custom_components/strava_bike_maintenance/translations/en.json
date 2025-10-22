@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Connect to Strava",
-        "description": "Enter your Strava API credentials to link your account.",
+        "description": "Enter your Strava API credentials to link your account.\n\nIn the Strava developer portal set the callback URL to {callback_url} before continuing.",
         "data": {
           "client_id": "Client ID",
           "client_secret": "Client Secret"

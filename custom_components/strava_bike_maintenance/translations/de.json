@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Mit Strava verbinden",
-        "description": "Gib deine Strava-API-Zugangsdaten ein, um dein Konto zu verknüpfen.",
+        "description": "Gib deine Strava-API-Zugangsdaten ein, um dein Konto zu verknüpfen.\n\nSetze im Strava-Entwicklerportal die Callback-URL auf {callback_url}, bevor du fortfährst.",
         "data": {
           "client_id": "Client-ID",
           "client_secret": "Client-Secret"

@@ -8,7 +8,9 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import callback
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_entry_oauth2_flow
+from homeassistant.helpers.network import get_url
 
 from .const import (
     API_AUTHORIZE_URL,
@@ -41,6 +43,18 @@ class StravaConfigFlow(
     async def async_step_user(self, user_input=None):
         """Handle the initial step of the flow."""
         if user_input is None:
+            callback_url = "https://<your-home-assistant>/auth/external/callback"
+            try:
+                base_url = get_url(self.hass)
+            except HomeAssistantError:
+                base_url = None
+
+            if base_url:
+                callback_url = (
+                    f"{base_url.rstrip('/')}"
+                    f"{config_entry_oauth2_flow.AUTH_CALLBACK_PATH}"
+                )
+
             return self.async_show_form(
                 step_id="user",
                 data_schema=vol.Schema(
@@ -49,6 +63,7 @@ class StravaConfigFlow(
                         vol.Required(CONF_CLIENT_SECRET): str,
                     }
                 ),
+                description_placeholders={"callback_url": callback_url},
             )
 
         await self.async_set_unique_id(DOMAIN)
