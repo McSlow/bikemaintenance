@@ -43,11 +43,17 @@ class StravaConfigFlow(
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
         """Handle the initial step of the flow."""
-        placeholder_callback = _compute_callback_url(self.hass, allow_internal_fallback=True)
+        # We always show a callback hint; fall back to an internal URL so users
+        # have something to copy even before an external URL is configured.
+        placeholder_callback = _compute_callback_url(
+            self.hass, allow_internal_fallback=True
+        )
 
         errors: dict[str, str] = {}
         if user_input is not None:
             try:
+                # Strava must be able to reach the redirect, so refuse to continue
+                # if Home Assistant cannot provide an externally accessible URL.
                 redirect_uri = _compute_callback_url(self.hass, allow_internal_fallback=False)
             except HomeAssistantError:
                 errors["base"] = "missing_external_url"
@@ -86,6 +92,7 @@ class StravaConfigFlow(
         """Handle re-authentication with existing credentials."""
         entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
         assert entry is not None  # nosec
+        # Reauth always re-validates that an external callback URL is available.
         redirect_uri = _compute_callback_url(self.hass, allow_internal_fallback=False)
 
         self._client_id = entry.data[CONF_CLIENT_ID]

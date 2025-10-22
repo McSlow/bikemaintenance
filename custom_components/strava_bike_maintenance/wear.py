@@ -83,6 +83,7 @@ class WearCounterManager:
                 # First observation - treat as baseline with no accrued wear.
                 state.last_total_distance_km = total_km
             else:
+                # Strava can only increase cumulative distance, so ignore non-positive deltas.
                 delta = total_km - state.last_total_distance_km
                 if delta > 0:
                     for part in WEAR_PARTS:

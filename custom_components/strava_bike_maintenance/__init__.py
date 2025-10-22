@@ -44,6 +44,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     client_id = entry.data[CONF_CLIENT_ID]
     client_secret = entry.data[CONF_CLIENT_SECRET]
 
+    # Create an OAuth2 implementation bound to this config entry; Home Assistant
+    # persists tokens behind the scenes via the config entry.
     implementation = config_entry_oauth2_flow.LocalOAuth2Implementation(
         hass,
         DOMAIN,
@@ -61,6 +63,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         wear_manager,
     )
 
+    # Fetch initial data so entities are created with real state on first load.
     await coordinator.async_config_entry_first_refresh()
 
     domain_data["entries"][entry.entry_id] = {
@@ -69,6 +72,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     }
 
     if not domain_data["service_registered"]:
+        # Register the reset service once; it operates across all entry instances.
         hass.services.async_register(
             DOMAIN,
             "reset_wear_counter",

@@ -19,6 +19,7 @@ class StravaApiClient:
 
     def __init__(self, oauth_session: config_entry_oauth2_flow.OAuth2Session) -> None:
         self._session = oauth_session
+        # Serialise outgoing requests so token refreshes from the session cannot race.
         self._lock = asyncio.Lock()
 
     async def async_get_bikes(self) -> Dict[str, Any]:

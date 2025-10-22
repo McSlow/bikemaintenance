@@ -34,11 +34,11 @@ async def async_setup_entry(
     entry_data = hass.data[DOMAIN][entry.entry_id]
     coordinator: StravaDataUpdateCoordinator = entry_data["coordinator"]
 
-    entities: List[SensorEntity] = []
     known_bikes: set[str] = set()
 
     @callback
     def _add_new_bike_entities() -> None:
+        """Create sensors for any bikes that appeared since the last refresh."""
         new_entities: List[SensorEntity] = []
         for gear_id in coordinator.data:
             if gear_id in known_bikes:

@@ -45,7 +45,9 @@ class StravaDataUpdateCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         except ClientResponseError as err:
             raise UpdateFailed(f"Error communicating with Strava API: {err}") from err
 
+        # Convert Strava's cumulative metre counts into kilometres per bike.
         bike_distances_km = StravaApiClient.extract_bike_distances_km(athlete_payload)
+        # Feed the totals through the wear manager so counters grow with distance.
         wear_snapshot = await self.wear_manager.async_process_bikes(bike_distances_km)
 
         data: Dict[str, Any] = {}
@@ -64,6 +66,7 @@ class StravaDataUpdateCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
                 "wear_counters": wear_snapshot.get(gear_id, {}),
             }
 
+        # Store minimal athlete info so entities can expose it as device metadata.
         self.athlete = {
             "id": athlete_payload.get("id"),
             "firstname": athlete_payload.get("firstname"),
