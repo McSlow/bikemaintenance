@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Se connecter à Strava",
-        "description": "Saisissez vos identifiants API Strava pour lier votre compte.",
+        "description": "Saisissez vos identifiants API Strava pour lier votre compte.\n\nDans le portail développeur Strava, définissez l’URL de rappel sur {callback_url} avant de continuer.",
         "data": {
           "client_id": "Identifiant Client",
           "client_secret": "Secret Client"
