@@ -1,0 +1,32 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Home Assistant logs and storage
+home-assistant.log
+home-assistant.log.*
+.storage/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+
+# IDEs and editors
+.idea/
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
