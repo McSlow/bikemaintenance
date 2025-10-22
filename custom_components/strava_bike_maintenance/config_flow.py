@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -16,6 +18,8 @@ from .const import (
     DOMAIN,
 )
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class StravaConfigFlow(
     config_entry_oauth2_flow.AbstractOAuth2FlowHandler, domain=DOMAIN
@@ -28,6 +32,11 @@ class StravaConfigFlow(
         """Initialise the config flow."""
         self._client_id: str | None = None
         self._client_secret: str | None = None
+
+    @property
+    def logger(self) -> logging.Logger:
+        """Logger provided to the base flow."""
+        return _LOGGER
 
     async def async_step_user(self, user_input=None):
         """Handle the initial step of the flow."""
