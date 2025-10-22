@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Se connecter à Strava",
+        "description": "Saisissez vos identifiants API Strava pour lier votre compte.",
+        "data": {
+          "client_id": "Identifiant Client",
+          "client_secret": "Secret Client"
+        }
+      },
+      "reauth": {
+        "title": "Reconnecter Strava",
+        "description": "Autorisez à nouveau Home Assistant auprès de Strava."
+      }
+    },
+    "abort": {
+      "already_configured": "Une seule instance de Strava Bike Maintenance est prise en charge."
+    }
+  },
+  "services": {
+    "reset_wear_counter": {
+      "name": "Réinitialiser le compteur d'usure",
+      "description": "Réinitialise le compteur d'usure pour le vélo et la pièce indiqués.",
+      "fields": {
+        "bike_id": {
+          "name": "ID du vélo",
+          "description": "Identifiant de l'équipement Strava (ex. b123456789)."
+        },
+        "part": {
+          "name": "Pièce d'usure",
+          "description": "Choisissez le compteur d'usure à réinitialiser."
+        }
+      }
+    }
+  }
+}
