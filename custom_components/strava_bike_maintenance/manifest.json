@@ -1,0 +1,13 @@
+{
+  "domain": "strava_bike_maintenance",
+  "name": "Strava Bike Maintenance",
+  "version": "0.1.0",
+  "documentation": "https://developers.strava.com/",
+  "requirements": [],
+  "config_flow": true,
+  "codeowners": [
+    "@McSlow"
+  ],
+  "iot_class": "cloud_polling",
+  "integration_type": "hub"
+}

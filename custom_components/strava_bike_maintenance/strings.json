@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Strava",
+        "description": "Enter your Strava API credentials to link your account.",
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client Secret"
+        }
+      },
+      "reauth": {
+        "title": "Reconnect to Strava",
+        "description": "Re-authorise Home Assistant with Strava."
+      }
+    },
+    "abort": {
+      "already_configured": "Only a single Strava Bike Maintenance entry is supported."
+    }
+  },
+  "services": {
+    "reset_wear_counter": {
+      "name": "Reset Wear Counter",
+      "description": "Reset a wear counter for the specified bike and part.",
+      "fields": {
+        "bike_id": {
+          "name": "Bike ID",
+          "description": "The Strava gear ID of the bike (e.g. b123456789)."
+        },
+        "part": {
+          "name": "Wear Part",
+          "description": "Select which wear counter to reset."
+        }
+      }
+    }
+  }
+}

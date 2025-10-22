@@ -1,0 +1,23 @@
+reset_wear_counter:
+  name: Reset Wear Counter
+  description: Reset a wear counter for the specified bike.
+  fields:
+    bike_id:
+      name: Bike ID
+      description: Strava gear ID that identifies the bike (e.g. b123456789).
+      required: true
+      selector:
+        text:
+    part:
+      name: Wear Part
+      description: Which wear counter to reset.
+      required: true
+      selector:
+        select:
+          options:
+            - value: chain
+              label: Chain
+            - value: chain_waxing
+              label: Chain Waxing
+            - value: tires
+              label: Tires
