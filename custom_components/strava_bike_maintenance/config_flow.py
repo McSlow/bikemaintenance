@@ -81,7 +81,7 @@ class StravaConfigFlow(
             API_TOKEN_URL,
         )
 
-        return await super().async_step_user(user_input)
+        return await self.async_step_auth()
 
     async def async_step_reauth(self, entry_data: dict):
         """Handle re-authentication with existing credentials."""
@@ -100,7 +100,7 @@ class StravaConfigFlow(
             API_TOKEN_URL,
         )
 
-        return await super().async_step_reauth(entry_data)
+        return await self.async_step_auth()
 
     async def async_oauth_create_entry(self, data: dict) -> config_entries.ConfigEntry:
         """Create a config entry after successful OAuth authentication."""
