@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mit Strava verbinden",
+        "description": "Gib deine Strava-API-Zugangsdaten ein, um dein Konto zu verknüpfen.",
+        "data": {
+          "client_id": "Client-ID",
+          "client_secret": "Client-Secret"
+        }
+      },
+      "reauth": {
+        "title": "Strava erneut verbinden",
+        "description": "Autorisiere Home Assistant erneut bei Strava."
+      }
+    },
+    "abort": {
+      "already_configured": "Es kann nur ein einzelner Strava-Bike-Maintenance-Eintrag konfiguriert werden."
+    }
+  },
+  "services": {
+    "reset_wear_counter": {
+      "name": "Verschleißzähler zurücksetzen",
+      "description": "Setze den Verschleißzähler für das angegebene Fahrrad und Teil zurück.",
+      "fields": {
+        "bike_id": {
+          "name": "Fahrrad-ID",
+          "description": "Die Strava-Gear-ID des Fahrrads (z. B. b123456789)."
+        },
+        "part": {
+          "name": "Verschleißteil",
+          "description": "Wähle den Verschleißzähler, der zurückgesetzt werden soll."
+        }
+      }
+    }
+  }
+}
