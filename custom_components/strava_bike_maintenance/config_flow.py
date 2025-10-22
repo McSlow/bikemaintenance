@@ -10,7 +10,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_entry_oauth2_flow
-from homeassistant.helpers.network import get_url
+from homeassistant.helpers.network import NoURLAvailableError, get_url
 
 from .const import (
     API_AUTHORIZE_URL,
@@ -43,17 +43,7 @@ class StravaConfigFlow(
     async def async_step_user(self, user_input=None):
         """Handle the initial step of the flow."""
         if user_input is None:
-            callback_url = "https://<your-home-assistant>/auth/external/callback"
-            try:
-                base_url = get_url(self.hass)
-            except HomeAssistantError:
-                base_url = None
-
-            if base_url:
-                callback_url = (
-                    f"{base_url.rstrip('/')}"
-                    f"{config_entry_oauth2_flow.AUTH_CALLBACK_PATH}"
-                )
+            callback_url = _compute_callback_url(self.hass)
 
             return self.async_show_form(
                 step_id="user",
@@ -72,7 +62,7 @@ class StravaConfigFlow(
         self._client_id = user_input[CONF_CLIENT_ID]
         self._client_secret = user_input[CONF_CLIENT_SECRET]
 
-        self.flow_impl = config_entry_oauth2_flow.LocalOAuth2Implementation(
+        self.flow_impl = StravaOAuth2Implementation(
             self.hass,
             DOMAIN,
             self._client_id,
@@ -91,7 +81,7 @@ class StravaConfigFlow(
         self._client_id = entry.data[CONF_CLIENT_ID]
         self._client_secret = entry.data[CONF_CLIENT_SECRET]
 
-        self.flow_impl = config_entry_oauth2_flow.LocalOAuth2Implementation(
+        self.flow_impl = StravaOAuth2Implementation(
             self.hass,
             DOMAIN,
             self._client_id,
@@ -137,3 +127,40 @@ class StravaOptionsFlow(config_entries.OptionsFlow):
     async def async_step_init(self, user_input=None):
         """Options flow entry point."""
         return self.async_create_entry(title="", data={})
+
+
+class StravaOAuth2Implementation(
+    config_entry_oauth2_flow.LocalOAuth2Implementation
+):
+    """Local OAuth implementation with stricter redirect handling."""
+
+    @property
+    def redirect_uri(self) -> str:
+        """Return the redirect URI used for Strava OAuth."""
+        return _compute_callback_url(self.hass)
+
+
+def _compute_callback_url(hass) -> str:
+    """Best-effort computation of a usable callback URL."""
+    default = (
+        f"https://<your-home-assistant>"
+        f"{config_entry_oauth2_flow.AUTH_CALLBACK_PATH}"
+    )
+
+    try:
+        base_url = get_url(
+            hass,
+            prefer_external=True,
+            allow_cloud=False,
+        )
+    except (HomeAssistantError, NoURLAvailableError):
+        try:
+            base_url = get_url(
+                hass,
+                allow_internal=True,
+                allow_cloud=False,
+            )
+        except (HomeAssistantError, NoURLAvailableError):
+            return default
+
+    return f"{base_url.rstrip('/')}{config_entry_oauth2_flow.AUTH_CALLBACK_PATH}"
