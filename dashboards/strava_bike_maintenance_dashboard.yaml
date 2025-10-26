@@ -1,0 +1,129 @@
+title: Strava Bike Maintenance
+icon: mdi:bike
+views:
+  - title: Bikes
+    path: strava-bikes
+    type: masonry
+    cards:
+      - type: markdown
+        content: >
+          ## 🚴‍♂️ Strava Bike Maintenance
+
+          - Sensors below come from the custom Strava Bike Maintenance integration.
+          - Replace the sample entity IDs in this dashboard with the sensors that Home Assistant created for your bikes.
+          - Use the wear counter reset buttons to call `strava_bike_maintenance.reset_wear_counter` without typing IDs manually.
+      - type: grid
+        title: Total Distance
+        columns: 2
+        cards:
+          - type: tile
+            entity: sensor.strava_gravel_bike_total_distance
+            name: Gravel Bike
+            color: blue
+            features:
+              - type: line-graph
+          - type: tile
+            entity: sensor.strava_commuter_total_distance
+            name: Commuter
+            color: green
+            features:
+              - type: line-graph
+      - type: grid
+        title: Wear Counters
+        columns: 3
+        cards:
+          - type: tile
+            entity: sensor.strava_gravel_bike_chain
+            name: Gravel Chain
+            color: amber
+            features:
+              - type: line-graph
+          - type: tile
+            entity: sensor.strava_gravel_bike_chain_waxing
+            name: Gravel Waxing
+            color: purple
+          - type: tile
+            entity: sensor.strava_gravel_bike_tires
+            name: Gravel Tires
+            color: red
+          - type: tile
+            entity: sensor.strava_commuter_chain
+            name: Commuter Chain
+            color: amber
+          - type: tile
+            entity: sensor.strava_commuter_chain_waxing
+            name: Commuter Waxing
+            color: purple
+          - type: tile
+            entity: sensor.strava_commuter_tires
+            name: Commuter Tires
+            color: red
+      - type: statistics-graph
+        title: Weekly Wear Accumulation
+        days_to_show: 7
+        chart_type: line
+        entities:
+          - sensor.strava_gravel_bike_chain
+          - sensor.strava_gravel_bike_chain_waxing
+          - sensor.strava_gravel_bike_tires
+          - sensor.strava_commuter_chain
+          - sensor.strava_commuter_chain_waxing
+          - sensor.strava_commuter_tires
+      - type: grid
+        title: Wear Counter Reset
+        columns: 3
+        cards:
+          - type: button
+            name: Reset Gravel Chain
+            icon: mdi:link-variant-remove
+            tap_action:
+              action: call-service
+              service: script.strava_reset_wear_counter
+              data:
+                sensor_entity: sensor.strava_gravel_bike_chain
+                wear_part: chain
+          - type: button
+            name: Reset Gravel Wax
+            icon: mdi:candle
+            tap_action:
+              action: call-service
+              service: script.strava_reset_wear_counter
+              data:
+                sensor_entity: sensor.strava_gravel_bike_chain_waxing
+                wear_part: chain_waxing
+          - type: button
+            name: Reset Gravel Tires
+            icon: mdi:tire
+            tap_action:
+              action: call-service
+              service: script.strava_reset_wear_counter
+              data:
+                sensor_entity: sensor.strava_gravel_bike_tires
+                wear_part: tires
+          - type: button
+            name: Reset Commuter Chain
+            icon: mdi:link-variant-remove
+            tap_action:
+              action: call-service
+              service: script.strava_reset_wear_counter
+              data:
+                sensor_entity: sensor.strava_commuter_chain
+                wear_part: chain
+          - type: button
+            name: Reset Commuter Wax
+            icon: mdi:candle
+            tap_action:
+              action: call-service
+              service: script.strava_reset_wear_counter
+              data:
+                sensor_entity: sensor.strava_commuter_chain_waxing
+                wear_part: chain_waxing
+          - type: button
+            name: Reset Commuter Tires
+            icon: mdi:tire
+            tap_action:
+              action: call-service
+              service: script.strava_reset_wear_counter
+              data:
+                sensor_entity: sensor.strava_commuter_tires
+                wear_part: tires

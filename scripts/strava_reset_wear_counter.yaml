@@ -1,0 +1,31 @@
+strava_reset_wear_counter:
+  alias: Reset Strava Wear Counter
+  description: >
+    Helper script for the Strava Bike Maintenance dashboard. Pass the wear sensor
+    entity and the part to reset; the script extracts the bike_id automatically.
+  fields:
+    sensor_entity:
+      description: Wear sensor entity (e.g. sensor.strava_gravel_bike_chain)
+      example: sensor.strava_gravel_bike_chain
+      selector:
+        entity:
+          domain: sensor
+    wear_part:
+      description: Wear part to reset (chain, chain_waxing, tires)
+      example: chain
+      selector:
+        select:
+          options:
+            - chain
+            - chain_waxing
+            - tires
+  sequence:
+    - variables:
+        bike_id: "{{ state_attr(sensor_entity, 'bike_id') }}"
+    - condition: template
+      value_template: "{{ bike_id is not none }}"
+    - service: strava_bike_maintenance.reset_wear_counter
+      data:
+        bike_id: "{{ bike_id }}"
+        part: "{{ wear_part }}"
+  mode: single

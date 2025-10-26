@@ -44,6 +44,14 @@ data:
 
 Valid `part` values: `chain`, `chain_waxing`, `tires`. The `bike_id` appears in sensor attributes or in Strava’s gear URL. Updated totals show up on the next Strava poll (default every 2 hours) or immediately after a manual refresh.
 
+## 📊 Custom Dashboard
+A ready-to-use Lovelace dashboard lives at `dashboards/strava_bike_maintenance_dashboard.yaml`. To use it:
+
+1. Copy the file into your Home Assistant config directory (e.g. `/config/dashboards/`), edit the sample entity IDs (`sensor.strava_gravel_bike_*`, `sensor.strava_commuter_*`) so they match the bikes that were created in your instance, and add/remove cards as needed.
+2. Create the helper script in `scripts/strava_reset_wear_counter.yaml` (or merge its contents into your existing `scripts.yaml`). This script extracts the `bike_id` from the wear sensors so the dashboard buttons can reset counters without hard-coded IDs.
+3. In Home Assistant go to **Settings → Dashboards → + Add Dashboard**, choose **Show code editor**, and point it at the YAML file (or paste its contents).
+4. Open the dashboard: you’ll see total-distance tiles, wear-counter tiles, a weekly wear graph, and per-part reset buttons that call `strava_bike_maintenance.reset_wear_counter` via the helper script.
+
 ## 🧯 Troubleshooting
 - **No bikes discovered**: Check that bikes exist in Strava and the app request includes the `read` and `profile:read_all` scopes (reconfigure the integration if you previously denied `profile:read_all`).
 - **Authentication expired**: Use **Reconfigure** on the integration card to repeat the OAuth flow; confirm your Client Secret matches the Strava app.
