@@ -6,7 +6,7 @@ import asyncio
 import logging
 from typing import Any, Dict, List
 
-from aiohttp import ClientResponseError
+from aiohttp import ClientResponseError, ContentTypeError
 from homeassistant.helpers import config_entry_oauth2_flow
 
 from .const import API_BASE_URL
@@ -26,17 +26,21 @@ class StravaApiClient:
         """Fetch the authenticated athlete's bike data."""
         async with self._lock:
             try:
-                data = await self._session.async_request(
+                response = await self._session.async_request(
                     "get",
                     f"{API_BASE_URL}/athlete",
                     raise_for_status=True,
                 )
+                data = await response.json()
             except ClientResponseError as err:
                 _LOGGER.error(
                     "Strava API request failed: status=%s message=%s",
                     err.status,
                     err.message,
                 )
+                raise
+            except ContentTypeError as err:
+                _LOGGER.error("Invalid JSON payload from Strava: error=%s", err)
                 raise
 
         return data
