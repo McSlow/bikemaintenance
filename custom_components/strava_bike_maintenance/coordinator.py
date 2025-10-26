@@ -42,6 +42,13 @@ class StravaDataUpdateCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
     async def _async_update_data(self) -> Dict[str, Any]:
         try:
             athlete_payload = await self._api_client.async_get_bikes()
+            if not isinstance(athlete_payload, dict):
+                try:
+                    athlete_payload = await athlete_payload.json()
+                except AttributeError as err:
+                    raise UpdateFailed(
+                        f"Unexpected Strava payload type: {type(athlete_payload)!r}"
+                    ) from err
         except ClientResponseError as err:
             raise UpdateFailed(f"Error communicating with Strava API: {err}") from err
 

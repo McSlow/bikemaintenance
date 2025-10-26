@@ -31,7 +31,13 @@ async def async_setup_entry(
     async_add_entities,
 ) -> None:
     """Set up Strava Bike Maintenance sensors."""
-    entry_data = hass.data[DOMAIN][entry.entry_id]
+    domain_data = hass.data.get(DOMAIN, {})
+    entries: Dict[str, Dict[str, Any]] = domain_data.get("entries", {})
+    entry_data = entries.get(entry.entry_id)
+    if entry_data is None:
+        raise RuntimeError(
+            "Strava Bike Maintenance entry data missing; reload the integration"
+        )
     coordinator: StravaDataUpdateCoordinator = entry_data["coordinator"]
 
     known_bikes: set[str] = set()
