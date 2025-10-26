@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Connect to Strava",
-        "description": "Enter your Strava API credentials to link your account.\n\nIn the Strava developer portal set the Authorization Callback Domain (or URL) to {callback_url}. The Home Assistant UI will handle the redirect even if your instance is only available locally.",
+        "description": "Enter your Strava API credentials to link your account.\n\nIn the Strava developer portal set the Authorization Callback Domain (or URL) to {callback_url}. The Home Assistant UI will handle the redirect even if your instance is only available locally.\n\nStrava will ask you to grant the `read` and `profile:read_all` scopes so Home Assistant can download your bike list.",
         "data": {
           "client_id": "Client ID",
           "client_secret": "Client Secret"

@@ -20,7 +20,7 @@ Keep on top of wear items across your bikes by syncing Strava mileage straight i
 2. Restart Home Assistant to load the integration.
 3. In the Strava developer portal set the **Authorization Callback Domain** to `my.home-assistant.io` (recommended) or to the public HTTPS domain you already use for Home Assistant. The config flow passes through [My Home Assistant](https://my.home-assistant.io/) so the redirect works even when your instance is only reachable on your local network.
 4. Go to **Settings → Devices & Services → Add Integration**, search for **Strava Bike Maintenance**, and select it.
-5. Enter your Strava Client ID and Client Secret. Authorise Home Assistant when Strava prompts you.
+5. Enter your Strava Client ID and Client Secret. Authorise Home Assistant when Strava prompts you (the integration requests the `read` and `profile:read_all` scopes so it can download your bike list).
 6. Once linked, the integration creates devices and sensors for every bike returned by Strava.
 
 ## 📡 Entities
@@ -45,7 +45,7 @@ data:
 Valid `part` values: `chain`, `chain_waxing`, `tires`. The `bike_id` appears in sensor attributes or in Strava’s gear URL. Updated totals show up on the next Strava poll (default every 2 hours) or immediately after a manual refresh.
 
 ## 🧯 Troubleshooting
-- **No bikes discovered**: Check that bikes exist in Strava and the app request includes the `read` scope.
+- **No bikes discovered**: Check that bikes exist in Strava and the app request includes the `read` and `profile:read_all` scopes (reconfigure the integration if you previously denied `profile:read_all`).
 - **Authentication expired**: Use **Reconfigure** on the integration card to repeat the OAuth flow; confirm your Client Secret matches the Strava app.
 - **Wear counters not persisting**: Ensure Home Assistant can write to its configuration directory; counters rely on the storage helper.
 

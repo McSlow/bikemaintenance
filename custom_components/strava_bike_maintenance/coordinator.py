@@ -52,13 +52,21 @@ class StravaDataUpdateCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         except ClientResponseError as err:
             raise UpdateFailed(f"Error communicating with Strava API: {err}") from err
 
+        bikes = athlete_payload.get("bikes", []) or []
+        if not bikes:
+            _LOGGER.warning(
+                "Strava did not return any bikes for the authenticated athlete. "
+                "Ensure the Strava consent granted the 'profile:read_all' scope "
+                "and that bikes exist under My Gear."
+            )
+
         # Convert Strava's cumulative metre counts into kilometres per bike.
         bike_distances_km = StravaApiClient.extract_bike_distances_km(athlete_payload)
         # Feed the totals through the wear manager so counters grow with distance.
         wear_snapshot = await self.wear_manager.async_process_bikes(bike_distances_km)
 
         data: Dict[str, Any] = {}
-        for bike in athlete_payload.get("bikes", []):
+        for bike in bikes:
             gear_id = bike.get("id")
             if gear_id is None:
                 continue

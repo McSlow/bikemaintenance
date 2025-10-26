@@ -111,7 +111,7 @@ class StravaConfigFlow(
     def extra_authorize_data(self) -> dict:
         """Additional data to append to the authorisation URL."""
         return {
-            "scope": "read",
+            "scope": "read,profile:read_all",
             "approval_prompt": "auto",
         }
 
