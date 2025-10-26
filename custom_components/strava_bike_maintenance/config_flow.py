@@ -9,9 +9,7 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_entry_oauth2_flow
-from homeassistant.helpers.network import NoURLAvailableError, get_url
 
 from .const import (
     API_AUTHORIZE_URL,
@@ -43,38 +41,25 @@ class StravaConfigFlow(
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
         """Handle the initial step of the flow."""
-        # We always show a callback hint; fall back to an internal URL so users
-        # have something to copy even before an external URL is configured.
-        placeholder_callback = _compute_callback_url(
-            self.hass, allow_internal_fallback=True
-        )
+        placeholder_callback = _redirect_hint(self.hass)
 
-        errors: dict[str, str] = {}
         if user_input is not None:
-            try:
-                # Strava must be able to reach the redirect, so refuse to continue
-                # if Home Assistant cannot provide an externally accessible URL.
-                redirect_uri = _compute_callback_url(self.hass, allow_internal_fallback=False)
-            except HomeAssistantError:
-                errors["base"] = "missing_external_url"
-            else:
-                await self.async_set_unique_id(DOMAIN)
-                self._abort_if_unique_id_configured()
+            await self.async_set_unique_id(DOMAIN)
+            self._abort_if_unique_id_configured()
 
-                self._client_id = user_input[CONF_CLIENT_ID]
-                self._client_secret = user_input[CONF_CLIENT_SECRET]
+            self._client_id = user_input[CONF_CLIENT_ID]
+            self._client_secret = user_input[CONF_CLIENT_SECRET]
 
-                self.flow_impl = StravaOAuth2Implementation(
-                    self.hass,
-                    DOMAIN,
-                    self._client_id,
-                    self._client_secret,
-                    API_AUTHORIZE_URL,
-                    API_TOKEN_URL,
-                    redirect_uri,
-                )
+            self.flow_impl = config_entry_oauth2_flow.LocalOAuth2Implementation(
+                self.hass,
+                DOMAIN,
+                self._client_id,
+                self._client_secret,
+                API_AUTHORIZE_URL,
+                API_TOKEN_URL,
+            )
 
-                return await self.async_step_auth()
+            return await self.async_step_auth()
 
         return self.async_show_form(
             step_id="user",
@@ -85,27 +70,22 @@ class StravaConfigFlow(
                 }
             ),
             description_placeholders={"callback_url": placeholder_callback},
-            errors=errors,
         )
 
     async def async_step_reauth(self, entry_data: dict):
         """Handle re-authentication with existing credentials."""
         entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
         assert entry is not None  # nosec
-        # Reauth always re-validates that an external callback URL is available.
-        redirect_uri = _compute_callback_url(self.hass, allow_internal_fallback=False)
-
         self._client_id = entry.data[CONF_CLIENT_ID]
         self._client_secret = entry.data[CONF_CLIENT_SECRET]
 
-        self.flow_impl = StravaOAuth2Implementation(
+        self.flow_impl = config_entry_oauth2_flow.LocalOAuth2Implementation(
             self.hass,
             DOMAIN,
             self._client_id,
             self._client_secret,
             API_AUTHORIZE_URL,
             API_TOKEN_URL,
-            redirect_uri,
         )
 
         return await self.async_step_auth()
@@ -147,67 +127,9 @@ class StravaOptionsFlow(config_entries.OptionsFlow):
         return self.async_create_entry(title="", data={})
 
 
-class StravaOAuth2Implementation(
-    config_entry_oauth2_flow.LocalOAuth2Implementation
-):
-    """Local OAuth implementation with stricter redirect handling."""
-
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        domain: str,
-        client_id: str,
-        client_secret: str,
-        authorize_url: str,
-        token_url: str,
-        redirect_uri: str,
-    ) -> None:
-        super().__init__(
-            hass,
-            domain,
-            client_id,
-            client_secret,
-            authorize_url,
-            token_url,
-        )
-        self._redirect_uri = redirect_uri
-
-    @property
-    def redirect_uri(self) -> str:
-        """Return the redirect URI used for Strava OAuth."""
-        return self._redirect_uri
-
-
-def _compute_callback_url(
-    hass: HomeAssistant,
-    *,
-    allow_internal_fallback: bool,
-) -> str:
-    """Best-effort computation of a usable callback URL."""
-    default = (
-        f"https://<your-home-assistant>"
-        f"{config_entry_oauth2_flow.AUTH_CALLBACK_PATH}"
-    )
-
+def _redirect_hint(hass: HomeAssistant) -> str:
+    """Return a callback hint for the form description."""
     try:
-        base_url = get_url(
-            hass,
-            prefer_external=True,
-            allow_cloud=False,
-            allow_ip=False,
-        )
-    except (HomeAssistantError, NoURLAvailableError):
-        if not allow_internal_fallback:
-            raise HomeAssistantError("external_url_not_configured")
-
-        try:
-            base_url = get_url(
-                hass,
-                allow_internal=True,
-                allow_cloud=False,
-                allow_ip=False,
-            )
-        except (HomeAssistantError, NoURLAvailableError):
-            return default
-
-    return f"{base_url.rstrip('/')}{config_entry_oauth2_flow.AUTH_CALLBACK_PATH}"
+        return config_entry_oauth2_flow.async_get_redirect_uri(hass)
+    except RuntimeError:
+        return config_entry_oauth2_flow.MY_AUTH_CALLBACK_PATH
